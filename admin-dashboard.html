@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - UPF EMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="img/uganda-police-logo.png" alt="Uganda Police Force Logo">
+            <h1>Administrator Dashboard</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active" data-section="dashboard">Dashboard</a></li>
+                <li><a href="#" data-section="cases">All Cases</a></li>
+                <li><a href="#" data-section="reports">All Reports</a></li>
+                <li><a href="#" data-section="users">User Management</a></li>
+                <li><a href="#" data-section="settings">System Settings</a></li>
+                <a href="index.html" class="btn btn-sm" id="logout">Logout</a>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Dashboard Overview -->
+        <section id="dashboard" class="dashboard-section active">
+            <h2>System Overview</h2>
+            
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <h3>Total Cases Today</h3>
+                    <p class="stat-value">24</p>
+                    <p class="stat-change">↑ 12% from yesterday</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Cases</h3>
+                    <p class="stat-value">18</p>
+                    <p class="stat-change">↓ 5% from yesterday</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Cases Resolved</h3>
+                    <p class="stat-value">6</p>
+                    <p class="stat-change">↑ 3% from yesterday</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Response Time</h3>
+                    <p class="stat-value">22 min</p>
+                    <p class="stat-change">↓ 8% from yesterday</p>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="casesByTypeChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="casesByStationChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Station</th>
+                            <th>Activity</th>
+                            <th>Case No.</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14:30</td>
+                            <td>Naguru CPS</td>
+                            <td>New case reported</td>
+                            <td>UPF/230615/042</td>
+                            <td><span class="status pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>14:15</td>
+                            <td>Kiira Road</td>
+                            <td>Case updated</td>
+                            <td>UPF/230615/041</td>
+                            <td><span class="status in-progress">In Progress</span></td>
+                        </tr>
+                        <tr>
+                            <td>13:45</td>
+                            <td>Ntinda</td>
+                            <td>Case resolved</td>
+                            <td>UPF/230614/038</td>
+                            <td><span class="status resolved">Resolved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- All Cases Section -->
+        <section id="cases" class="dashboard-section">
+            <h2>All Cases</h2>
+            <div class="case-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="caseStatusFilter">Status</label>
+                        <select id="caseStatusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="escalated">Escalated</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseStationFilter">Station</label>
+                        <select id="caseStationFilter">
+                            <option value="">All Stations</option>
+                            <option value="naguru">Naguru CPS</option>
+                            <option value="kiira">Kiira Road</option>
+                            <option value="ntinda">Ntinda</option>
+                            <option value="jinja">Jinja Road</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseDateFilter">Date</label>
+                        <input type="date" id="caseDateFilter">
+                    </div>
+                    <button class="btn" id="applyFilters">Apply Filters</button>
+                </div>
+            </div>
+            <div class="case-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Case No.</th>
+                            <th>Caller</th>
+                            <th>Type</th>
+                            <th>Station</th>
+                            <th>Date/Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UPF/230615/042</td>
+                            <td>Sarah K.</td>
+                            <td>Armed Robbery</td>
+                            <td>Ntinda</td>
+                            <td>2023-06-15 14:30</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-sm view-case">View</button>
+                                <button class="btn btn-sm reassign-case">Reassign</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UPF/230615/041</td>
+                            <td>Robert M.</td>
+                            <td>Road Accident</td>
+                            <td>Kiira Road</td>
+                            <td>2023-06-15 13:45</td>
+                            <td><span class="status in-progress">In Progress</span></td>
+                            <td>
+                                <button class="btn btn-sm view-case">View</button>
+                                <button class="btn btn-sm reassign-case">Reassign</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- All Reports Section -->
+        <section id="reports" class="dashboard-section">
+            <h2>All Station Reports</h2>
+            <div class="report-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="reportTypeFilter">Report Type</label>
+                        <select id="reportTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="daily">Daily</option>
+                            <option value="incident">Incident</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="special">Special</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportStationFilter">Station</label>
+                        <select id="reportStationFilter">
+                            <option value="">All Stations</option>
+                            <option value="naguru">Naguru CPS</option>
+                            <option value="kiira">Kiira Road</option>
+                            <option value="ntinda">Ntinda</option>
+                            <option value="jinja">Jinja Road</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportDateFilter">Date Range</label>
+                        <input type="date" id="reportDateFilter">
+                        <span>to</span>
+                        <input type="date" id="reportEndDateFilter">
+                    </div>
+                    <button class="btn" id="applyReportFilters">Apply Filters</button>
+                </div>
+            </div>
+            <div class="report-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Station</th>
+                            <th>Type</th>
+                            <th>Period</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RPT/2023/001</td>
+                            <td>Ntinda</td>
+                            <td>Incident</td>
+                            <td>2023-06-15</td>
+                            <td>2023-06-15 14:45</td>
+                            <td><span class="status pending">Pending Review</span></td>
+                            <td>
+                                <button class="btn btn-sm view-report">View</button>
+                                <button class="btn btn-sm approve-report">Approve</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- User Management Section -->
+        <section id="users" class="dashboard-section">
+            <h2>User Management</h2>
+            <div class="user-actions">
+                <button class="btn" id="newUser">Create New User</button>  
+                </div>
+            </div>
+            <div class="user-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Station</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UPF001</td>
+                            <td>John Okello</td>
+                            <td>Response Officer</td>
+                            <td>Naguru CPS</td>
+                            <td>2023-06-15 14:30</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm edit-user">Edit</button>
+                                <button class="btn btn-sm reset-password">Reset Password</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UPF002</td>
+                            <td>Sarah Nalwoga</td>
+                            <td>Station Commander</td>
+                            <td>Kiira Road</td>
+                            <td>2023-06-15 13:45</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm edit-user">Edit</button>
+                                <button class="btn btn-sm reset-password">Reset Password</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- System Settings Section -->
+        <section id="settings" class="dashboard-section">
+            <h2>System Settings</h2>
+            <div class="settings-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="notification">Notification Settings</button>
+                    <button class="tab-btn" data-tab="system">System Configuration</button>
+                    <button class="tab-btn" data-tab="security">Security Settings</button>
+                </div>
+                <div class="tab-content">
+                    <div id="notification" class="tab-pane active">
+                        <h3>Notification Settings</h3>
+                        <form id="notificationSettings">
+                            <div class="form-group">
+                                <label>SMS Notifications</label>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" name="smsDPC" checked> DPC Notifications
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="smsOC" checked> O/C Station Notifications
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="smsOPS" checked> O/C Operations Notifications
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="smsTemplate">SMS Template</label>
+                                <textarea id="smsTemplate" rows="4">
+[UPF EMS Alert] New emergency case #{caseNumber} reported at {location}. Type: {emergencyType}. Caller: {callerName} {callerPhone}. Please respond immediately.
+                                </textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="system" class="tab-pane">
+                        <h3>System Configuration</h3>
+                        <form id="systemSettings">
+                            <div class="form-group">
+                                <label for="caseNumberFormat">Case Number Format</label>
+                                <input type="text" id="caseNumberFormat" value="UPF/YYMMDD/###">
+                            </div>
+                            <div class="form-group">
+                                <label for="autoLogout">Auto Logout (minutes)</label>
+                                <input type="number" id="autoLogout" value="30" min="5" max="120">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="security" class="tab-pane">
+                        <h3>Security Settings</h3>
+                        <form id="securitySettings">
+                            <div class="form-group">
+                                <label for="passwordPolicy">Password Policy</label>
+                                <select id="passwordPolicy">
+                                    <option value="simple">Simple (6 characters minimum)</option>
+                                    <option value="medium" selected>Medium (8 characters, 1 number)</option>
+                                    <option value="complex">Complex (10 characters, mixed case, special chars)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginAttempts">Max Login Attempts</label>
+                                <input type="number" id="loginAttempts" value="5" min="3" max="10">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-btn').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show selected tab content
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Section switching
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                
+                // Update active nav link
+                document.querySelectorAll('nav a').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show selected section
+                document.querySelectorAll('.dashboard-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cases by Type chart
+            const typeCtx = document.getElementById('casesByTypeChart').getContext('2d');
+            new Chart(typeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Armed Robbery', 'Road Accident', 'Domestic Violence', 'Fire Outbreak', 'Medical Emergency', 'Other'],
+                    datasets: [{
+                        data: [12, 8, 15, 3, 5, 7],
+                        backgroundColor: [
+                            '#8B0000',
+                            '#FFA500',
+                            '#4B0082',
+                            '#FF0000',
+                            '#008000',
+                            '#808080'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Cases by Emergency Type'
+                        }
+                    }
+                }
+            });
+
+            // Cases by Station chart
+            const stationCtx = document.getElementById('casesByStationChart').getContext('2d');
+            new Chart(stationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Naguru CPS', 'Kiira Road', 'Ntinda', 'Jinja Road', 'Central'],
+                    datasets: [{
+                        label: 'Cases Today',
+                        data: [8, 6, 5, 3, 2],
+                        backgroundColor: '#006400'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Cases by Police Station'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+// Tab switching with active state management
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Update active tab button
+        document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Show selected tab content with smooth transition
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        const selectedPane = document.getElementById(tabId);
+        selectedPane.classList.add('active');
+        selectedPane.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// Navigation section switching with state management
+document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute('data-section');
+        
+        // Update active nav link
+        document.querySelectorAll('nav a').forEach(navLink => navLink.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Handle specific section actions
+        switch(sectionId) {
+            case 'dashboard':
+                await loadDashboardData();
+                break;
+            case 'users':
+                await loadUserManagement();
+                break;
+            case 'reports':
+                await loadReports();
+                break;
+            case 'settings':
+                await loadSettings();
+                break;
+        }
+        
+        // Show selected section with smooth transition
+        document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+    });
+});
+
+// Logout button functionality
+document.getElementById('logout').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = 'index.html';
+    } catch (err) {
+        console.error('Logout failed:', err);
+    }
+});
+
+// Dashboard data loading
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/dashboard/stats');
+        const data = await response.json();
+        updateDashboardCharts(data);
+    } catch (err) {
+        console.error('Failed to load dashboard data:', err);
+    }
+}
+
+// User management functions
+async function loadUserManagement() {
+    try {
+        const response = await fetch('/api/users');
+        const users = await response.json();
+        displayUsers(users);
+    } catch (err) {
+        console.error('Failed to load users:', err);
+    }
+}
+
+// Reports loading
+async function loadReports() {
+    try {
+        const response = await fetch('/api/reports');
+        const reports = await response.json();
+        displayReports(reports);
+    } catch (err) {
+        console.error('Failed to load reports:', err);
+    }
+}
+
+// Settings management
+async function loadSettings() {
+    try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+        displaySettings(settings);
+    } catch (err) {
+        console.error('Failed to load settings:', err);
+    }
+}
+
+// Chart initialization and updates
+function updateDashboardCharts(data) {
+    // Cases by Type chart
+    const typeCtx = document.getElementById('casesByTypeChart').getContext('2d');
+    if (window.casesByTypeChart) {
+        window.casesByTypeChart.destroy();
+    }
+    window.casesByTypeChart = new Chart(typeCtx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Cases by Type',
+                data: data.values,
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+// Initialize dashboard on load
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadDashboardData();
+});
+</script>
+<script>
+// --- Section Navigation ---
+document.querySelectorAll('nav a[data-section]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute('data-section');
+        document.querySelectorAll('nav a[data-section]').forEach(navLink => navLink.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        // Optionally scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
+
+// --- Tab Switching in Settings ---
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+    });
+});
+
+// --- Filter Buttons ---
+document.getElementById('applyFilters')?.addEventListener('click', function() {
+    // You can fetch filtered cases here
+    alert('Case filters applied!');
+});
+document.getElementById('applyReportFilters')?.addEventListener('click', function() {
+    // You can fetch filtered reports here
+    alert('Report filters applied!');
+});
+
+// --- Case Actions ---
+document.querySelectorAll('.view-case').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Viewing case details...');
+        // Optionally, open a modal or navigate to a case detail page
+    });
+});
+document.querySelectorAll('.reassign-case').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Reassigning case...');
+        // Optionally, open a modal for reassignment
+    });
+});
+
+// --- Report Actions ---
+document.querySelectorAll('.view-report').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Viewing report...');
+        // Optionally, open a modal or navigate to report detail
+    });
+});
+document.querySelectorAll('.approve-report').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Report approved!');
+        // Optionally, update status in backend
+    });
+});
+
+// --- User Management Actions ---
+document.getElementById('newUser')?.addEventListener('click', function() {
+    alert('Redirecting to new user creation form...');
+    // Optionally, open a modal or navigate to user creation page
+});
+document.querySelectorAll('.edit-user').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Editing user...');
+        // Optionally, open a modal for editing user
+    });
+});
+document.querySelectorAll('.reset-password').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Password reset link sent!');
+        // Optionally, trigger backend password reset
+    });
+});
+
+// --- Settings Forms ---
+document.getElementById('notificationSettings')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Notification settings saved!');
+    // Optionally, send data to backend
+});
+document.getElementById('systemSettings')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('System configuration saved!');
+    // Optionally, send data to backend
+});
+document.getElementById('securitySettings')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Security settings saved!');
+    // Optionally, send data to backend
+});
+
+// --- Logout Button ---
+document.getElementById('logout')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    // Optionally, call backend logout endpoint
+    window.location.href = 'index.html';
+});
+</script>
+<!-- Add this before </body> -->
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Reset User Password</h2>
+        <form id="passwordResetForm">
+            <input type="hidden" id="resetUserId">
+            <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" required minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required minlength="8">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn">Reset Password</button>
+                <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+// Password Reset Functionality
+const passwordModal = document.getElementById('passwordResetModal');
+const resetForm = document.getElementById('passwordResetForm');
+
+// Show password reset modal
+function showPasswordModal(userId, userName) {
+    document.getElementById('resetUserId').value = userId;
+    passwordModal.style.display = 'block';
+}
+
+// Close password reset modal
+function closePasswordModal() {
+    passwordModal.style.display = 'none';
+    resetForm.reset();
+}
+
+// Handle password reset
+resetForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userId = document.getElementById('resetUserId').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/users/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                newPassword: newPassword
+            })
+        });
+
+        if (response.ok) {
+            alert('Password reset successful!');
+            closePasswordModal();
+        } else {
+            alert('Failed to reset password. Please try again.');
+        }
+    } catch (err) {
+        console.error('Password reset error:', err);
+        alert('Failed to reset password. Please try again.');
+    }
+});
+
+// Update the reset password button listeners
+document.querySelectorAll('.reset-password').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const userId = row.querySelector('td:first-child').textContent;
+        const userName = row.querySelector('td:nth-child(2)').textContent;
+        showPasswordModal(userId, userName);
+    });
+});
+</script>
+/* Password Reset Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 5px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+#passwordResetForm .form-group {
+    margin-bottom: 15px;
+}
+
+#passwordResetForm input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#passwordResetForm .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+</body>
+</html>

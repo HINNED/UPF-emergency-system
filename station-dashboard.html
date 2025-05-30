@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Station Command - UPF EMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="img/uganda-police-logo.png" alt="Uganda Police Force Logo">
+            <h1>Station Command Dashboard</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active" data-section="referred-cases">Referred Cases</a></li>
+                <li><a href="#" data-section="case-files">Case Files</a></li>
+                <li><a href="#" data-section="reports">Reports</a></li>
+                <li><a href="#" data-section="escalation">Escalation</a></li>
+                <a href="index.html" class="btn btn-sm" id="logout">Logout</a>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Referred Cases Section -->
+        <section id="referred-cases" class="dashboard-section active">
+            <h2>Referred Cases</h2>
+            <div class="case-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Case No.</th>
+                            <th>Caller</th>
+                            <th>Emergency Type</th>
+                            <th>Date/Time</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UPF/230615/042</td>
+                            <td>Sarah K.</td>
+                            <td>Armed Robbery</td>
+                            <td>2023-06-15 14:30</td>
+                            <td>Ntinda</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-sm view-case">View</button>
+                                <button class="btn btn-sm dispatch-team">Dispatch</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UPF/230615/041</td>
+                            <td>Robert M.</td>
+                            <td>Road Accident</td>
+                            <td>2023-06-15 13:45</td>
+                            <td>Kiira Road</td>
+                            <td><span class="status in-progress">In Progress</span></td>
+                            <td>
+                                <button class="btn btn-sm view-case">View</button>
+                                <button class="btn btn-sm update-case">Update</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="case-details-modal" id="caseDetailsModal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3>Case Details: <span id="modalCaseNumber"></span></h3>
+                    <div class="case-info">
+                        <div class="info-row">
+                            <span class="info-label">Caller:</span>
+                            <span class="info-value" id="modalCaller"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value" id="modalPhone"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Emergency Type:</span>
+                            <span class="info-value" id="modalEmergencyType"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date/Time:</span>
+                            <span class="info-value" id="modalDateTime"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value" id="modalLocation"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Coordinates:</span>
+                            <span class="info-value" id="modalCoordinates"></span>
+                        </div>
+                        <div class="info-row full-width">
+                            <span class="info-label">Description:</span>
+                            <span class="info-value" id="modalDescription"></span>
+                        </div>
+                    </div>
+                    <div id="caseLocationMap" style="height: 250px; margin: 15px 0;"></div>
+                    <div class="form-group">
+                        <label for="officerNotes">Officer Notes</label>
+                        <textarea id="officerNotes" rows="3" placeholder="Enter your findings and actions taken..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn" id="saveCaseNotes">Save Notes</button>
+                        <button class="btn btn-secondary" id="createCaseFile">Create Case File</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case Files Section -->
+        <section id="case-files" class="dashboard-section">
+            <h2>Case Files Management</h2>
+            <div class="file-actions">
+                <button class="btn" id="newCaseFile">Create New Case File</button>
+            </div>
+            <div class="file-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File No.</th>
+                            <th>Case No.</th>
+                            <th>Title</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CF/2023/001</td>
+                            <td>UPF/230615/042</td>
+                            <td>Ntinda Robbery Case</td>
+                            <td>2023-06-15</td>
+                            <td>Open</td>
+                            <td>
+                                <button class="btn btn-sm view-file">View</button>
+                                <button class="btn btn-sm update-file">Update</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="dashboard-section">
+            <h2>Station Reports</h2>
+            <div class="report-form">
+                <form id="stationReportForm">
+                    <div class="form-group">
+                        <label for="reportType">Report Type</label>
+                        <select id="reportType" required>
+                            <option value="">Select Report Type</option>
+                            <option value="daily">Daily Activity Report</option>
+                            <option value="incident">Incident Report</option>
+                            <option value="monthly">Monthly Summary</option>
+                            <option value="special">Special Operation</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportDate">Report Date</label>
+                            <input type="date" id="reportDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportPeriod">Period Covered</label>
+                            <input type="text" id="reportPeriod" placeholder="e.g., June 2023">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportContent">Report Content</label>
+                        <textarea id="reportContent" rows="8" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn">Submit to Command Center</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Escalation Section -->
+        <section id="escalation" class="dashboard-section">
+            <h2>Case Escalation</h2>
+            <div class="escalation-form">
+                <form id="caseEscalationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="escalationCase">Case Number</label>
+                            <select id="escalationCase" required>
+                                <option value="">Select Case</option>
+                                <option value="UPF/230615/042">UPF/230615/042 - Ntinda Robbery</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                                <option value="UPF/230615/041">UPF/230615/041 - Kiira Road Accident</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="escalationType">Escalation Type</label>
+                            <select id="escalationType" required>
+                                <option value="">Select Type</option>
+                                <option value="cid">CID Investigation</option>
+                                <option value="prosecution">Prosecution</option>
+                                <option value="highcourt">High Court</option>
+                                <option value="special">Special Investigation</option>
+                                <option value="PSU">Police Standard Unit</option>
+                                <option value="RSA">Regional State Antony</option>
+                                <option value="special">Special Investigation</option>
+                                <option value="special">Special Investigation</option>
+                                <option value="special">Special Investigation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="escalationReason">Reason for Escalation</label>
+                        <textarea id="escalationReason" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="escalationAttachments">Attachments</label>
+                        <input type="file" id="escalationAttachments" multiple>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn">Submit Escalation</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="../js/map.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                
+                // Update active tab
+                document.querySelectorAll('nav a').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show selected section
+                document.querySelectorAll('.dashboard-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Case details modal
+        document.querySelectorAll('.view-case').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const caseNumber = row.cells[0].textContent;
+                
+                // In a real system, this would come from an API
+                document.getElementById('modalCaseNumber').textContent = caseNumber;
+                document.getElementById('modalCaller').textContent = row.cells[1].textContent;
+                document.getElementById('modalEmergencyType').textContent = row.cells[2].textContent;
+                document.getElementById('modalDateTime').textContent = row.cells[3].textContent;
+                document.getElementById('modalLocation').textContent = row.cells[4].textContent;
+                
+                // Set mock coordinates based on location
+                const coordinates = {
+                    'Ntinda': '0.3480, 32.6165',
+                    'Kiira Road': '0.3376, 32.5862'
+                };
+                document.getElementById('modalCoordinates').textContent = coordinates[row.cells[4].textContent] || '0.3136, 32.5811';
+                
+                // Show modal
+                document.getElementById('caseDetailsModal').style.display = 'block';
+                
+                // Initialize map with coordinates
+                const [lat, lng] = (coordinates[row.cells[4].textContent] || '0.3136, 32.5811').split(',').map(Number);
+                initMap(lat, lng, 'caseLocationMap');
+            });
+        });
+
+        // Close modal
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('caseDetailsModal').style.display = 'none';
+        });
+    </script>
+    <!-- Add this script before </body> -->
+<script>
+/* Tab switching (already present) */
+document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute('data-section');
+        document.querySelectorAll('nav a').forEach(navLink => navLink.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+    });
+});
+
+/* Case details modal (already present, improved for dynamic content) */
+document.querySelectorAll('.view-case').forEach(button => {
+    button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const caseNumber = row.cells[0].textContent;
+        document.getElementById('modalCaseNumber').textContent = caseNumber;
+        document.getElementById('modalCaller').textContent = row.cells[1].textContent;
+        document.getElementById('modalEmergencyType').textContent = row.cells[2].textContent;
+        document.getElementById('modalDateTime').textContent = row.cells[3].textContent;
+        document.getElementById('modalLocation').textContent = row.cells[4].textContent;
+        const coordinates = {
+            'Ntinda': '0.3480, 32.6165',
+            'Kiira Road': '0.3376, 32.5862'
+        };
+        document.getElementById('modalCoordinates').textContent = coordinates[row.cells[4].textContent] || '0.3136, 32.5811';
+        document.getElementById('modalDescription').textContent = "Description for " + caseNumber;
+        document.getElementById('caseDetailsModal').style.display = 'block';
+        const [lat, lng] = (coordinates[row.cells[4].textContent] || '0.3136, 32.5811').split(',').map(Number);
+        if (window.caseMap) window.caseMap.remove();
+        window.caseMap = L.map('caseLocationMap').setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window.caseMap);
+        L.marker([lat, lng]).addTo(window.caseMap);
+    });
+});
+
+/* Close modal */
+document.querySelector('.close-modal').addEventListener('click', function() {
+    document.getElementById('caseDetailsModal').style.display = 'none';
+    if (window.caseMap) window.caseMap.remove();
+});
+
+/* Dispatch Team Button */
+document.querySelectorAll('.dispatch-team').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        row.querySelector('.status').textContent = 'Dispatched';
+        row.querySelector('.status').className = 'status dispatched';
+        alert('Team dispatched for case ' + row.cells[0].textContent);
+    });
+});
+
+/* Update Case Button */
+document.querySelectorAll('.update-case').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const row = this.closest('tr');
+        row.querySelector('.status').textContent = 'Updated';
+        row.querySelector('.status').className = 'status updated';
+        alert('Case ' + row.cells[0].textContent + ' updated!');
+    });
+});
+
+/* Save Case Notes */
+document.getElementById('saveCaseNotes').addEventListener('click', function() {
+    alert('Case notes saved!');
+});
+
+/* Create Case File */
+document.getElementById('createCaseFile').addEventListener('click', function() {
+    alert('Case file created!');
+});
+
+/* Create New Case File */
+document.getElementById('newCaseFile').addEventListener('click', function() {
+    alert('New case file creation started!');
+});
+
+/* View File */
+document.querySelectorAll('.view-file').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Viewing file details...');
+    });
+});
+
+/* Update File */
+document.querySelectorAll('.update-file').forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert('Updating file...');
+    });
+});
+
+/* Station Report Form */
+document.getElementById('stationReportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Report submitted to Command Center!');
+    this.reset();
+});
+
+/* Escalation Form */
+document.getElementById('caseEscalationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Case escalation submitted!');
+    this.reset();
+});
+</script>
+</body>
+</html>

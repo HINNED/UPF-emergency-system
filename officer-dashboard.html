@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Dashboard - UPF EMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="img/uganda-police-logo.png" alt="Uganda Police Force Logo">
+            <h1>Emergency Response Dashboard</h1>
+        </div>
+        <div class="user-info">
+            <span id="currentOfficer">Officer: John Okello</span>
+            <span id="currentStation">Station: Naguru CPS</span>
+            <a href="index.html" class="btn btn-sm" id="logout">Logout</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="dashboard-container">
+            <h2>New Emergency Case Entry</h2>
+            
+            <form id="emergencyForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="callerName">Caller's Name</label>
+                        <input type="text" id="callerName" name="callerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="callerPhone">Phone Number</label>
+                        <input type="tel" id="callerPhone" name="callerPhone" required pattern="\d{10}" maxlength="10" minlength="10" title="Please enter a 10-digit phone number">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyType">Emergency Type</label>
+                    <select id="emergencyType" name="emergencyType" required>
+                        <option value="">Select Emergency Type</option>
+                        <option value="robbery">Armed Robbery</option>
+                        <option value="accident">Road Accident</option>
+                        <option value="fire">Fire Outbreak</option>
+                        <option value="medical">Medical Emergency</option>
+                        <option value="domestic">Domestic Violence</option>
+                        <option value="kidnap">Kidnapping</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="caseNumber">Case Number</label>
+                        <input type="text" id="caseNumber" name="caseNumber" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportDateTime">Date/Time</label>
+                        <input type="text" id="reportDateTime" name="reportDateTime" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyDescription">Emergency Description</label>
+                    <textarea id="emergencyDescription" name="emergencyDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Caller Location</label>
+                    <div id="locationMap" style="height: 600px; width: 1150px; margin-top: 10px;"></div>
+                    <div class="coordinates">
+                        <span>Latitude: <span id="latitude">0.3136</span></span>
+                        <span>Longitude: <span id="longitude">32.5811</span></span>
+                    </div>
+                    <button type="button" class="btn btn-sm" id="getLocation">Get Current Location</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="referralStation">Refer to Station</label>
+                    <select id="referralStation" name="referralStation" required>
+                        <option value="">Select Station</option>
+                        <option value="cps">Kampala Central Police Station</option>
+                        <option value="nps">Nateete Police Station</option>
+                        <option value="jinja">Jinja Road Station</option>
+                        <option value="ntinda">Ntinda Police station</option>
+                        <option value="kiira">Kiira Road Police Station</option>
+                         <option value="kawempe">Kawempe police Station</option>
+                          <option value="old Kampala">old Kampala police Station</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn">Submit & Refer Case</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js""></script>
+    <script src="map.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Set current date/time and case number
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            document.getElementById('reportDateTime').value = now.toLocaleString();
+            
+            // Generate case number (UPF/YYMMDD/001)
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            
+            // this would come from the backend
+            const sequence = Math.floor(Math.random() * 50) + 1;
+            document.getElementById('caseNumber').value = `UPF/${year}${month}${day}/${sequence.toString().padStart(3, '0')}`;
+            
+            // Initialize map centered on Kampala
+            // Initialize Leaflet map centered on Kampala
+            const map = L.map('locationMap').setView([0.3136, 32.5811], 13);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // Marker for caller location
+            let marker = L.marker([0.3136, 32.5811], {draggable: true}).addTo(map);
+
+            // Update coordinates display
+            function updateCoordinates(lat, lng) {
+                document.getElementById('latitude').textContent = lat.toFixed(4);
+                document.getElementById('longitude').textContent = lng.toFixed(4);
+            }
+
+            // Update marker and coordinates
+            function updateMap(lat, lng) {
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng], 15);
+                updateCoordinates(lat, lng);
+            }
+
+            // On marker drag
+            marker.on('dragend', function(e) {
+                const {lat, lng} = e.target.getLatLng();
+                updateCoordinates(lat, lng);
+            });
+
+            // On map click, move marker
+            map.on('click', function(e) {
+                const {lat, lng} = e.latlng;
+                marker.setLatLng([lat, lng]);
+                updateCoordinates(lat, lng);
+            });
+
+            // Initial coordinates display
+            updateCoordinates(0.3136, 32.5811);
+            
+            // Get location button - this is handled below with the 'getLocation' button event listener.
+            // When the "Get Current Location" button is clicked, it uses the browser's geolocation API
+            // to get the caller's current location and updates the map and coordinates fields accordingly.
+            document.getElementById('getLocation').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        document.getElementById('latitude').textContent = lat.toFixed(4);
+                        document.getElementById('longitude').textContent = lng.toFixed(4);
+                        updateMap(lat, lng);
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            });
+        });
+    </script>
+    <!-- Add this script before </body> -->
+<script>
+document.getElementById('emergencyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Gather form data
+    const data = {
+        callerName: document.getElementById('callerName').value,
+        callerPhone: document.getElementById('callerPhone').value,
+        emergencyType: document.getElementById('emergencyType').value,
+        caseNumber: document.getElementById('caseNumber').value,
+        reportDateTime: document.getElementById('reportDateTime').value,
+        emergencyDescription: document.getElementById('emergencyDescription').value,
+        latitude: document.getElementById('latitude').textContent,
+        longitude: document.getElementById('longitude').textContent,
+        referralStation: document.getElementById('referralStation').value
+    };
+
+    try {
+        // Send to backend (adjust URL as needed)
+        const response = await fetch('/api/cases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Case referred successfully to the station command!');
+            this.reset();
+        } else {
+            alert('Failed to refer case. Please try again.');
+        }
+    } catch (err) {
+        alert('Error submitting case. Please check your connection.');
+    }
+});
+</script>
+</body>
+</html>

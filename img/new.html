@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPF Emergency Management System</title>
+    <style>
+        :root {
+            --upf-blue: #003366;
+            --upf-yellow: #FFCC00;
+            --upf-red: #CC0000;
+            --upf-light: #F5F5F5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--upf-light);
+            color: #333;
+        }
+        
+        header {
+            background-color: var(--upf-blue);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info span {
+            margin-right: 15px;
+        }
+        
+        .logout-btn {
+            background-color: var(--upf-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background-color: #AA0000;
+        }
+        
+        nav {
+            background-color: var(--upf-yellow);
+            padding: 0.5rem 1rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-right: 20px;
+        }
+        
+        nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-container h2 {
+            color: var(--upf-blue);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--upf-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .login-btn:hover {
+            background-color: #002244;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card h2 {
+            color: var(--upf-blue);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--upf-yellow);
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.5rem 1rem;
+        }
+        
+        .form-col {
+            flex: 1;
+            padding: 0 0.5rem;
+            min-width: 200px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--upf-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #002244;
+        }
+        
+        .btn-secondary {
+            background-color: var(--upf-yellow);
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #E6B800;
+        }
+        
+        .btn-danger {
+            background-color: var(--upf-red);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #AA0000;
+        }
+        
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--upf-blue);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .status-pending {
+            color: #E67E22;
+            font-weight: 600;
+        }
+        
+        .status-in-progress {
+            color: #3498DB;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            color: #27AE60;
+            font-weight: 600;
+        }
+        
+        .status-escalated {
+            color: #9B59B6;
+            font-weight: 600;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            background-color: #27AE60;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav li {
+                margin-bottom: 0.5rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-col {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <h2>Uganda Police Force<br>Emergency Management System</h2>
+        <div class="form-group">
+            <label for="login-role">Role</label>
+            <select id="login-role" class="form-control">
+                <option value="">Select your role</option>
+                <option value="officer1">Officer 1 (Case Entry)</option>
+                <option value="station">Police Station</option>
+                <option value="admin">Administrator</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" placeholder="Enter your username">
+        </div>
+        <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password">
+        </div>
+        <div class="form-group">
+            <button id="login-btn" class="login-btn">Login</button>
+        </div>
+    </div>
+    
+    <!-- Main Application (hidden until login) -->
+    <div id="app" class="hidden">
+        <header>
+            <div class="logo">
+                <img src="uganda-police-logo.png" alt="UPF Logo">
+                <h1>UPF Emergency Management</h1>
+            </div>
+            <div class="user-info">
+                <span id="current-user">User: Officer 1</span>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+        
+        <nav>
+            <ul id="nav-menu">
+                <!-- Navigation items will be populated based on role -->
+            </ul>
+        </nav>
+        
+        <div class="container">
+            <!-- Case Entry (Officer 1) -->
+            <div id="case-entry-section" class="hidden">
+                <div class="card">
+                    <h2>Case Entry Form</h2>
+                    <form id="case-entry-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="case-number">Case Number</label>
+                                    <input type="text" id="case-number" readonly>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="case-date">Date & Time</label>
+                                    <input type="text" id="case-date" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="caller-name">Caller Name</label>
+                                    <input type="text" id="caller-name" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="caller-phone">Caller Phone</label>
+                                    <input type="tel" id="caller-phone" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergency-type">Emergency Type</label>
+                            <select id="emergency-type" required>
+                                <option value="">Select emergency type</option>
+                                <option value="crime">Crime in Progress</option>
+                                <option value="accident">Road Accident</option>
+                                <option value="medical">Medical Emergency</option>
+                                <option value="fire">Fire Outbreak</option>
+                                <option value="domestic">Domestic Violence</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergency-details">Emergency Details</label>
+                            <textarea id="emergency-details" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Caller Location</label>
+                            <div class="map-container" id="caller-location-map"></div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="location-lat">Latitude</label>
+                                        <input type="text" id="location-lat" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="location-lng">Longitude</label>
+                                        <input type="text" id="location-lng" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="refer-to-station">Refer to Station</label>
+                            <select id="refer-to-station" required>
+                                <option value="">Select station</option>
+                                <option value="central">Central Police Station</option>
+                                <option value="kireka">Kireka Police Station</option>
+                                <option value="kawempe">Kawempe Police Station</option>
+                                <option value="old-kampala">Old Kampala Police Station</option>
+                                <option value="jinja-road">Jinja Road Police Station</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit Case</button>
+                            <button type="reset" class="btn btn-secondary">Clear Form</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Referred Cases (Police Station) -->
+            <div id="referred-cases-section" class="hidden">
+                <div class="card">
+                    <h2>Referred Cases</h2>
+                    <table id="referred-cases-table">
+                        <thead>
+                            <tr>
+                                <th>Case No.</th>
+                                <th>Date/Time</th>
+                                <th>Caller</th>
+                                <th>Emergency Type</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Cases will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="case-details-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Case Details</h3>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label>Case Number</label>
+                                        <input type="text" id="modal-case-number" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label>Date Reported</label>
+                                        <input type="text" id="modal-case-date" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label>Caller Name</label>
+                                        <input type="text" id="modal-caller-name" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label>Caller Phone</label>
+                                        <input type="text" id="modal-caller-phone" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Emergency Type</label>
+                                <input type="text" id="modal-emergency-type" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Emergency Details</label>
+                                <textarea id="modal-emergency-details" readonly></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Location</label>
+                                <div class="map-container" id="modal-location-map"></div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <div class="form-group">
+                                            <label>Latitude</label>
+                                            <input type="text" id="modal-location-lat" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-col">
+                                        <div class="form-group">
+                                            <label>Longitude</label>
+                                            <input type="text" id="modal-location-lng" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="officer-observations">Officer Observations</label>
+                                <textarea id="officer-observations"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="case-status">Case Status</label>
+                                <select id="case-status">
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="escalated">Escalated</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button id="save-case-details" class="btn btn-primary">Save Details</button>
+                                <button id="create-case-file" class="btn btn-secondary">Create Case File</button>
+                                <button id="close-case-details" class="btn btn-danger">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reports (Police Station) -->
+            <div id="reports-section" class="hidden">
+                <div class="card">
+                    <h2>Create Report</h2>
+                    <form id="report-form">
+                        <div class="form-group">
+                            <label for="report-title">Report Title</label>
+                            <input type="text" id="report-title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="report-case">Related Case (optional)</label>
+                            <select id="report-case">
+                                <option value="">Select case</option>
+                                <!-- Cases will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="report-content">Report Content</label>
+                            <textarea id="report-content" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit Report</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h2>Submitted Reports</h2>
+                    <table id="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                                <th>Related Case</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Reports will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Case Escalation (Police Station) -->
+            <div id="escalation-section" class="hidden">
+                <div class="card">
+                    <h2>Case Escalation</h2>
+                    <form id="escalation-form">
+                        <div class="form-group">
+                            <label for="escalate-case">Select Case to Escalate</label>
+                            <select id="escalate-case" required>
+                                <option value="">Select case</option>
+                                <!-- Cases will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="escalation-reason">Reason for Escalation</label>
+                            <textarea id="escalation-reason" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="escalate-to">Escalate To</label>
+                            <select id="escalate-to" required>
+                                <option value="">Select department</option>
+                                <option value="cid">CID Headquarters</option>
+                                <option value="traffic">Traffic Directorate</option>
+                                <option value="fire">Fire & Rescue Services</option>
+                                <option value="interpol">Interpol Uganda</option>
+                                <option value="command">National Command Centre</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit Escalation</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h2>Escalated Cases</h2>
+                    <table id="escalated-cases-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Case No.</th>
+                                <th>Escalated To</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Escalated cases will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Admin Dashboard -->
+            <div id="admin-dashboard" class="hidden">
+                <div class="card">
+                    <h2>System Overview</h2>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="card">
+                                <h3>Total Cases</h3>
+                                <p id="total-cases">0</p>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="card">
+                                <h3>Active Cases</h3>
+                                <p id="active-cases">0</p>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="card">
+                                <h3>Completed Cases</h3>
+                                <p id="completed-cases">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>User Management</h2>
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Station</th>
+                                <th>Last Login</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <button id="add-user-btn" class="btn btn-primary">Add New User</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>All Cases</h2>
+                    <table id="all-cases-table">
+                        <thead>
+                            <tr>
+                                <th>Case No.</th>
+                                <th>Date/Time</th>
+                                <th>Caller</th>
+                                <th>Emergency Type</th>
+                                <th>Station</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- All cases will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card">
+                    <h2>All Reports</h2>
+                    <table id="all-reports-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                                <th>Station</th>
+                                <th>Related Case</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- All reports will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Dummy data for the system
+        const dummyData = {
+            cases: [
+                {
+                    id: 1,
+                    caseNumber: 'UPF/2023/001',
+                    date: '2023-06-15 09:30:22',
+                    callerName: 'John Mugisha',
+                    callerPhone: '0772123456',
+                    emergencyType: 'crime',
+                    emergencyDetails: 'Armed robbery at shop along Kampala Road',
+                    location: { lat: 0.3136, lng: 32.5811 },
+                    station: 'central',
+                    status: 'completed',
+                    officerObservations: 'Team dispatched immediately. Suspects apprehended and items recovered.',
+                    caseFile: 'UPF-CF-2023-001'
+                },
+                {
+                    id: 2,
+                    caseNumber: 'UPF/2023/002',
+                    date: '2023-06-15 11:45:10',
+                    callerName: 'Sarah Nalwoga',
+                    callerPhone: '0756789012',
+                    emergencyType: 'accident',
+                    emergencyDetails: 'Serious accident at Bwaise roundabout involving taxi and boda',
+                    location: { lat: 0.3568, lng: 32.5679 },
+                    station: 'kawempe',
+                    status: 'in-progress',
+                    officerObservations: 'Two critically injured taken to hospital. Scene being cleared.',
+                    caseFile: ''
+                },
+                {
+                    id: 3,
+                    caseNumber: 'UPF/2023/003',
+                    date: '2023-06-16 14:20:35',
+                    callerName: 'Robert Kato',
+                    callerPhone: '0701122334',
+                    emergencyType: 'domestic',
+                    emergencyDetails: 'Domestic violence reported in Ntinda',
+                    location: { lat: 0.3621, lng: 32.6234 },
+                    station: 'kireka',
+                    status: 'pending',
+                    officerObservations: '',
+                    caseFile: ''
+                }
+            ],
+            reports: [
+                {
+                    id: 1,
+                    date: '2023-06-15 16:45:00',
+                    title: 'Armed Robbery Report',
+                    caseNumber: 'UPF/2023/001',
+                    station: 'central',
+                    content: 'Full report on armed robbery case including suspect details, recovered items, and witness statements.',
+                    status: 'submitted'
+                },
+                {
+                    id: 2,
+                    date: '2023-06-15 13:30:00',
+                    title: 'Bwaise Accident Preliminary',
+                    caseNumber: 'UPF/2023/002',
+                    station: 'kawempe',
+                    content: 'Initial report on accident scene with casualty figures and vehicle details.',
+                    status: 'draft'
+                }
+            ],
+            escalatedCases: [
+                {
+                    id: 1,
+                    caseNumber: 'UPF/2023/001',
+                    date: '2023-06-15 10:15:00',
+                    escalatedTo: 'cid',
+                    reason: 'Need for CID investigation into armed robbery',
+                    status: 'processed'
+                }
+            ],
+            users: [
+                {
+                    id: 1,
+                    username: 'officer1',
+                    role: 'officer1',
+                    station: 'naguru',
+                    lastLogin: '2023-06-16 08:15:00',
+                    active: true
+                },
+                {
+                    id: 2,
+                    username: 'central_station',
+                    role: 'station',
+                    station: 'central',
+                    lastLogin: '2023-06-16 09:30:00',
+                    active: true
+                },
+                {
+                    id: 3,
+                    username: 'kawempe_station',
+                    role: 'station',
+                    station: 'kawempe',
+                    lastLogin: '2023-06-16 07:45:00',
+                    active: true
+                },
+                {
+                    id: 4,
+                    username: 'admin',
+                    role: 'admin',
+                    station: 'hq',
+                    lastLogin: '2023-06-16 10:00:00',
+                    active: true
+                }
+            ],
+            stations: [
+                { id: 'naguru', name: 'Naguru Police Station' },
+                { id: 'central', name: 'Central Police Station' },
+                { id: 'kireka', name: 'Kireka Police Station' },
+                { id: 'kawempe', name: 'Kawempe Police Station' },
+                { id: 'old-kampala', name: 'Old Kampala Police Station' },
+                { id: 'jinja-road', name: 'Jinja Road Police Station' }
+            ]
+        };
+        
+        // Current user and role
+        let currentUser = null;
+        let currentRole = null;
+        let currentStation = null;
+        
+        // DOM elements
+        const loginScreen = document.getElementById('login-screen');
+        const app = document.getElementById('app');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const currentUserSpan = document.getElementById('current-user');
+        const navMenu = document.getElementById('nav-menu');
+        
+        // Section elements
+        const caseEntrySection = document.getElementById('case-entry-section');
+        const referredCasesSection = document.getElementById('referred-cases-section');
+        const reportsSection = document.getElementById('reports-section');
+        const escalationSection = document.getElementById('escalation-section');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        
+        // Case entry form
+        const caseEntryForm = document.getElementById('case-entry-form');
+        const caseNumberInput = document.getElementById('case-number');
+        const caseDateInput = document.getElementById('case-date');
+        const callerNameInput = document.getElementById('caller-name');
+        const callerPhoneInput = document.getElementById('caller-phone');
+        const emergencyTypeSelect = document.getElementById('emergency-type');
+        const emergencyDetailsTextarea = document.getElementById('emergency-details');
+        const locationLatInput = document.getElementById('location-lat');
+        const locationLngInput = document.getElementById('location-lng');
+        const referToStationSelect = document.getElementById('refer-to-station');
+        
+        // Initialize the application
+        function init() {
+            // Set up event listeners
+            loginBtn.addEventListener('click', handleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Generate case number and date when case entry section loads
+            caseEntryForm.addEventListener('submit', handleCaseSubmission);
+            
+            // Initialize dummy map (in a real app, this would be Google Maps or similar)
+            initDummyMap();
+            
+            // Load dummy data
+            loadDummyData();
+        }
+        
+        // Handle login
+        function handleLogin() {
+            const role = document.getElementById('login-role').value;
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            
+            if (!role || !username || !password) {
+                showNotification('Please fill in all fields');
+                return;
+            }
+            
+            // In a real app, this would be an API call to verify credentials
+            currentRole = role;
+            currentUser = username;
+            
+            // Set current station for station users
+            if (role === 'station') {
+                const station = dummyData.stations.find(s => s.id === username.split('_')[0]);
+                if (station) {
+                    currentStation = station.id;
+                }
+            }
+            
+            // Update UI
+            loginScreen.classList.add('hidden');
+            app.classList.remove('hidden');
+            currentUserSpan.textContent = `User: ${username}`;
+            
+            // Set up navigation based on role
+            setupNavigation();
+            
+            // Show appropriate sections
+            showRoleSections();
+            
+            // Generate case number if officer1
+            if (role === 'officer1') {
+                generateCaseNumber();
+                updateDateTime();
+            }
+            
+            // Load data for station users
+            if (role === 'station') {
+                loadReferredCases();
+                loadReports();
+                loadEscalatedCases();
+            }
+            
+            // Load admin data
+            if (role === 'admin') {
+                loadAdminData();
+            }
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            currentUser = null;
+            currentRole = null;
+            currentStation = null;
+            
+            app.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            
+            // Reset form fields
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+        
+        // Set up navigation based on role
+        function setupNavigation() {
+            navMenu.innerHTML = '';
+            
+            if (currentRole === 'officer1') {
+                const li = document.createElement('li');
+                li.innerHTML = '<a href="#" class="active" data-section="case-entry">Case Entry</a>';
+                navMenu.appendChild(li);
+            } 
+            else if (currentRole === 'station') {
+                const sections = [
+                    { id: 'referred-cases', label: 'Referred Cases' },
+                    { id: 'reports', label: 'Reports' },
+                    { id: 'escalation', label: 'Case Escalation' }
+                ];
+                
+                sections.forEach((section, index) => {
+                    const li = document.createElement('li');
+                    const activeClass = index === 0 ? 'active' : '';
+                    li.innerHTML = `<a href="#" class="${activeClass}" data-section="${section.id}">${section.label}</a>`;
+                    navMenu.appendChild(li);
+                });
+            } 
+            else if (currentRole === 'admin') {
+                const li = document.createElement('li');
+                li.innerHTML = '<a href="#" class="active" data-section="admin-dashboard">Admin Dashboard</a>';
+                navMenu.appendChild(li);
+            }
+            
+            // Add event listeners to nav items
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active state
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show the selected section
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                });
+            });
+        }
+        
+        // Show sections based on role
+        function showRoleSections() {
+            // Hide all sections first
+            caseEntrySection.classList.add('hidden');
+            referredCasesSection.classList.add('hidden');
+            reportsSection.classList.add('hidden');
+            escalationSection.classList.add('hidden');
+            adminDashboard.classList.add('hidden');
+            
+            // Show appropriate section based on role
+            if (currentRole === 'officer1') {
+                caseEntrySection.classList.remove('hidden');
+            } 
+            else if (currentRole === 'station') {
+                referredCasesSection.classList.remove('hidden');
+            } 
+            else if (currentRole === 'admin') {
+                adminDashboard.classList.remove('hidden');
+            }
+        }
+        
+        // Show a specific section
+        function showSection(sectionId) {
+            // Hide all sections first
+            caseEntrySection.classList.add('hidden');
+            referredCasesSection.classList.add('hidden');
+            reportsSection.classList.add('hidden');
+            escalationSection.classList.add('hidden');
+            adminDashboard.classList.add('hidden');
+            
+            // Show the selected section
+            if (sectionId === 'case-entry') {
+                caseEntrySection.classList.remove('hidden');
+            } 
+            else if (sectionId === 'referred-cases') {
+                referredCasesSection.classList.remove('hidden');
+            } 
+            else if (sectionId === 'reports') {
+                reportsSection.classList.remove('hidden');
+            } 
+            else if (sectionId === 'escalation') {
+                escalationSection.classList.remove('hidden');
+            } 
+            else if (sectionId === 'admin-dashboard') {
+                adminDashboard.classList.remove('hidden');
+            }
+        }
+        
+        // Generate case number
+        function generateCaseNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const lastCase = dummyData.cases[dummyData.cases.length - 1];
+            let nextId = 1;
+            
+            if (lastCase) {
+                const parts = lastCase.caseNumber.split('/');
+                nextId = parseInt(parts[2]) + 1;
+            }
+            
+            caseNumberInput.value = `UPF/${year}/${String(nextId).padStart(3, '0')}`;
+        }
+        
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toISOString().replace('T', ' ').substring(0, 19);
+            caseDateInput.value = dateStr;
+        }
+        
+        // Initialize dummy map (in a real app, use Google Maps API)
+        function initDummyMap() {
+            // This would be replaced with actual map initialization
+            // For demo purposes, we'll just simulate getting coordinates
+            document.getElementById('caller-location-map').innerHTML = 
+                '<div style="padding: 1rem; text-align: center; background-color: #f0f0f0; height: 100%; display: flex; align-items: center; justify-content: center;">' +
+                '<p>Map would display here with caller location</p>' +
+                '</div>';
+                
+            // Simulate getting location coordinates
+            setTimeout(() => {
+                // Random coordinates around Kampala for demo
+                const lat = 0.3136 + (Math.random() * 0.1 - 0.05);
+                const lng = 32.5811 + (Math.random() * 0.1 - 0.05);
+                
+                locationLatInput.value = lat.toFixed(6);
+                locationLngInput.value = lng.toFixed(6);
+            }, 1000);
+        }
+        
+        // Handle case submission
+        function handleCaseSubmission(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!callerNameInput.value || !callerPhoneInput.value || !emergencyTypeSelect.value || 
+                !emergencyDetailsTextarea.value || !locationLatInput.value || !locationLngInput.value || 
+                !referToStationSelect.value) {
+                showNotification('Please fill in all required fields');
+                return;
+            }
+            
+            // Create new case
+            const newCase = {
+                id: dummyData.cases.length + 1,
+                caseNumber: caseNumberInput.value,
+                date: caseDateInput.value,
+                callerName: callerNameInput.value,
+                callerPhone: callerPhoneInput.value,
+                emergencyType: emergencyTypeSelect.value,
+                emergencyDetails: emergencyDetailsTextarea.value,
+                location: {
+                    lat: parseFloat(locationLatInput.value),
+                    lng: parseFloat(locationLngInput.value)
+                },
+                station: referToStationSelect.value,
+                status: 'pending',
+                officerObservations: '',
+                caseFile: ''
+            };
+            
+            // Add to dummy data
+            dummyData.cases.push(newCase);
+            
+            // Send SMS notifications (simulated)
+            sendSMSNotifications(newCase);
+            
+            // Show success message
+            showNotification('Case submitted successfully and referred to ' + 
+                document.querySelector(`#refer-to-station option[value="${referToStationSelect.value}"]`).textContent);
+            
+            // Reset form and generate new case number
+            caseEntryForm.reset();
+            generateCaseNumber();
+            updateDateTime();
+            initDummyMap();
+        }
+        
+        // Simulate sending SMS notifications
+        function sendSMSNotifications(caseData) {
+            const station = dummyData.stations.find(s => s.id === caseData.station);
+            if (!station) return;
+            
+            const message = `NEW CASE: ${caseData.caseNumber}\n` +
+                           `Type: ${document.querySelector(`#emergency-type option[value="${caseData.emergencyType}"]`).textContent}\n` +
+                           `Location: ${caseData.location.lat.toFixed(4)}, ${caseData.location.lng.toFixed(4)}\n` +
+                           `Caller: ${caseData.callerName} (${caseData.callerPhone})\n` +
+                           `Details: ${caseData.emergencyDetails.substring(0, 50)}...`;
+            
+            console.log(`Sending SMS to DPC, O/C Station, and O/C Operations at ${station.name}:`);
+            console.log(message);
+            
+            // In a real app, this would call an SMS API
+        }
+        
+        // Load referred cases for station users
+        function loadReferredCases() {
+            const tableBody = document.querySelector('#referred-cases-table tbody');
+            tableBody.innerHTML = '';
+            
+            const stationCases = dummyData.cases.filter(c => c.station === currentStation);
+            
+            stationCases.forEach(c => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${c.caseNumber}</td>
+                    <td>${c.date}</td>
+                    <td>${c.callerName}</td>
+                    <td>${getEmergencyTypeLabel(c.emergencyType)}</td>
+                    <td>${c.location.lat.toFixed(4)}, ${c.location.lng.toFixed(4)}</td>
+                    <td class="status-${c.status.replace('-', '')}">${getStatusLabel(c.status)}</td>
+                    <td><button class="btn btn-primary view-case-btn" data-case-id="${c.id}">View</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-case-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const caseId = parseInt(this.getAttribute('data-case-id'));
+                    viewCaseDetails(caseId);
+                });
+            });
+        }
+        
+        // View case details
+        function viewCaseDetails(caseId) {
+            const caseData = dummyData.cases.find(c => c.id === caseId);
+            if (!caseData) return;
+            
+            // Populate modal fields
+            document.getElementById('modal-case-number').value = caseData.caseNumber;
+            document.getElementById('modal-case-date').value = caseData.date;
+            document.getElementById('modal-caller-name').value = caseData.callerName;
+            document.getElementById('modal-caller-phone').value = caseData.callerPhone;
+            document.getElementById('modal-emergency-type').value = getEmergencyTypeLabel(caseData.emergencyType);
+            document.getElementById('modal-emergency-details').value = caseData.emergencyDetails;
+            document.getElementById('modal-location-lat').value = caseData.location.lat;
+            document.getElementById('modal-location-lng').value = caseData.location.lng;
+            document.getElementById('officer-observations').value = caseData.officerObservations;
+            document.getElementById('case-status').value = caseData.status;
+            
+            // Show dummy map
+            document.getElementById('modal-location-map').innerHTML = 
+                `<div style="padding: 1rem; text-align: center; background-color: #f0f0f0; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p>Map showing location at ${caseData.location.lat.toFixed(4)}, ${caseData.location.lng.toFixed(4)}</p>
+                </div>`;
+            
+            // Show modal (in a real app, use a proper modal)
+            document.getElementById('case-details-modal').classList.remove('hidden');
+            
+            // Set up save button
+            document.getElementById('save-case-details').addEventListener('click', function() {
+                saveCaseDetails(caseId);
+            });
+            
+            // Set up create case file button
+            document.getElementById('create-case-file').addEventListener('click', function() {
+                createCaseFile(caseId);
+            });
+            
+            // Set up close button
+            document.getElementById('close-case-details').addEventListener('click', function() {
+                document.getElementById('case-details-modal').classList.add('hidden');
+            });
+        }
+        
+        // Save case details
+        function saveCaseDetails(caseId) {
+            const caseData = dummyData.cases.find(c => c.id === caseId);
+            if (!caseData) return;
+            
+            caseData.officerObservations = document.getElementById('officer-observations').value;
+            caseData.status = document.getElementById('case-status').value;
+            
+            showNotification('Case details saved successfully');
+            loadReferredCases();
+        }
+        
+        // Create case file
+        function createCaseFile(caseId) {
+            const caseData = dummyData.cases.find(c => c.id === caseId);
+            if (!caseData) return;
+            
+            if (caseData.caseFile) {
+                showNotification('Case file already exists: ' + caseData.caseFile);
+                return;
+            }
+            
+            const now = new Date();
+            const year = now.getFullYear();
+            const caseFileNumber = `UPF-CF-${year}-${String(caseId).padStart(3, '0')}`;
+            
+            caseData.caseFile = caseFileNumber;
+            showNotification('Case file created: ' + caseFileNumber);
+            loadReferredCases();
+        }
+        
+        // Load reports for station users
+        function loadReports() {
+            const reportCaseSelect = document.getElementById('report-case');
+            const reportsTableBody = document.querySelector('#reports-table tbody');
+            
+            // Clear existing options
+            reportCaseSelect.innerHTML = '<option value="">Select case</option>';
+            
+            // Add cases for current station
+            const stationCases = dummyData.cases.filter(c => c.station === currentStation);
+            stationCases.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = `${c.caseNumber} - ${getEmergencyTypeLabel(c.emergencyType)}`;
+                reportCaseSelect.appendChild(option);
+            });
+            
+            // Clear and populate reports table
+            reportsTableBody.innerHTML = '';
+            
+            const stationReports = dummyData.reports.filter(r => {
+                if (r.caseNumber) {
+                    const caseData = dummyData.cases.find(c => c.caseNumber === r.caseNumber);
+                    return caseData && caseData.station === currentStation;
+                }
+                return true;
+            });
+            
+            stationReports.forEach(r => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${r.date}</td>
+                    <td>${r.title}</td>
+                    <td>${r.caseNumber || 'N/A'}</td>
+                    <td>${r.status}</td>
+                    <td><button class="btn btn-primary view-report-btn" data-report-id="${r.id}">View</button></td>
+                `;
+                reportsTableBody.appendChild(row);
+            });
+            
+            // Set up report form submission
+            document.getElementById('report-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('report-title').value.trim();
+                const caseId = document.getElementById('report-case').value;
+                const content = document.getElementById('report-content').value.trim();
+                
+                if (!title || !content) {
+                    showNotification('Please fill in all required fields');
+                    return;
+                }
+                
+                const caseData = caseId ? dummyData.cases.find(c => c.id === parseInt(caseId)) : null;
+                
+                const newReport = {
+                    id: dummyData.reports.length + 1,
+                    date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+                    title: title,
+                    caseNumber: caseData ? caseData.caseNumber : '',
+                    station: currentStation,
+                    content: content,
+                    status: 'submitted'
+                };
+                
+                dummyData.reports.push(newReport);
+                showNotification('Report submitted successfully');
+                this.reset();
+                loadReports();
+            });
+        }
+        
+        // Load escalated cases for station users
+        function loadEscalatedCases() {
+            const escalateCaseSelect = document.getElementById('escalate-case');
+            const escalatedCasesTableBody = document.querySelector('#escalated-cases-table tbody');
+            
+            // Clear existing options
+            escalateCaseSelect.innerHTML = '<option value="">Select case</option>';
+            
+            // Add cases for current station
+            const stationCases = dummyData.cases.filter(c => c.station === currentStation && c.status !== 'completed');
+            stationCases.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = `${c.caseNumber} - ${getEmergencyTypeLabel(c.emergencyType)}`;
+                escalateCaseSelect.appendChild(option);
+            });
+            
+            // Clear and populate escalated cases table
+            escalatedCasesTableBody.innerHTML = '';
+            
+            const stationEscalatedCases = dummyData.escalatedCases.filter(ec => {
+                const caseData = dummyData.cases.find(c => c.caseNumber === ec.caseNumber);
+                return caseData && caseData.station === currentStation;
+            });
+            
+            stationEscalatedCases.forEach(ec => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ec.date}</td>
+                    <td>${ec.caseNumber}</td>
+                    <td>${ec.escalatedTo.toUpperCase()}</td>
+                    <td>${ec.status}</td>
+                    <td><button class="btn btn-primary view-escalation-btn" data-escalation-id="${ec.id}">View</button></td>
+                `;
+                escalatedCasesTableBody.appendChild(row);
+            });
+            
+            // Set up escalation form submission
+            document.getElementById('escalation-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const caseId = document.getElementById('escalate-case').value;
+                const reason = document.getElementById('escalation-reason').value.trim();
+                const escalateTo = document.getElementById('escalate-to').value;
+                
+                if (!caseId || !reason || !escalateTo) {
+                    showNotification('Please fill in all required fields');
+                    return;
+                }
+                
+                const caseData = dummyData.cases.find(c => c.id === parseInt(caseId));
+                if (!caseData) return;
+                
+                // Update case status
+                caseData.status = 'escalated';
+                
+                const newEscalation = {
+                    id: dummyData.escalatedCases.length + 1,
+                    caseNumber: caseData.caseNumber,
+                    date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+                    escalatedTo: escalateTo,
+                    reason: reason,
+                    status: 'pending'
+                };
+                
+                dummyData.escalatedCases.push(newEscalation);
+                showNotification('Case escalated successfully');
+                this.reset();
+                loadEscalatedCases();
+                loadReferredCases();
+            });
+        }
+        
+        // Load admin data
+        function loadAdminData() {
+            // Update stats
+            document.getElementById('total-cases').textContent = dummyData.cases.length;
+            document.getElementById('active-cases').textContent = dummyData.cases.filter(c => c.status !== 'completed').length;
+            document.getElementById('completed-cases').textContent = dummyData.cases.filter(c => c.status === 'completed').length;
+            
+            // Load users table
+            const usersTableBody = document.querySelector('#users-table tbody');
+            usersTableBody.innerHTML = '';
+            
+            dummyData.users.forEach(u => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${u.username}</td>
+                    <td>${u.role}</td>
+                    <td>${u.station}</td>
+                    <td>${u.lastLogin}</td>
+                    <td>${u.active ? 'Active' : 'Inactive'}</td>
+                    <td>
+                        <button class="btn btn-primary edit-user-btn" data-user-id="${u.id}">Edit</button>
+                        <button class="btn btn-danger delete-user-btn" data-user-id="${u.id}">Delete</button>
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+            
+            // Load all cases table
+            const allCasesTableBody = document.querySelector('#all-cases-table tbody');
+            allCasesTableBody.innerHTML = '';
+            
+            dummyData.cases.forEach(c => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${c.caseNumber}</td>
+                    <td>${c.date}</td>
+                    <td>${c.callerName}</td>
+                    <td>${getEmergencyTypeLabel(c.emergencyType)}</td>
+                    <td>${getStationName(c.station)}</td>
+                    <td class="status-${c.status.replace('-', '')}">${getStatusLabel(c.status)}</td>
+                    <td><button class="btn btn-primary admin-view-case-btn" data-case-id="${c.id}">View</button></td>
+                `;
+                allCasesTableBody.appendChild(row);
+            });
+            
+            // Load all reports table
+            const allReportsTableBody = document.querySelector('#all-reports-table tbody');
+            allReportsTableBody.innerHTML = '';
+            
+            dummyData.reports.forEach(r => {
+                const caseData = dummyData.cases.find(c => c.caseNumber === r.caseNumber);
+                const station = caseData ? getStationName(caseData.station) : getStationName(r.station);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${r.date}</td>
+                    <td>${r.title}</td>
+                    <td>${station}</td>
+                    <td>${r.caseNumber || 'N/A'}</td>
+                    <td>${r.status}</td>
+                `;
+                allReportsTableBody.appendChild(row);
+            });
+            
+            // Set up add user button
+            document.getElementById('add-user-btn').addEventListener('click', function() {
+                // In a real app, this would show a modal to add a new user
+                showNotification('Add user functionality would be implemented here');
+            });
+        }
+        
+        // Helper function to get emergency type label
+        function getEmergencyTypeLabel(type) {
+            const options = {
+                'crime': 'Crime in Progress',
+                'accident': 'Road Accident',
+                'medical': 'Medical Emergency',
+                'fire': 'Fire Outbreak',
+                'domestic': 'Domestic Violence',
+                'other': 'Other'
+            };
+            return options[type] || type;
+        }
+        
+        // Helper function to get status label
+        function getStatusLabel(status) {
+            const options = {
+                'pending': 'Pending',
+                'in-progress': 'In Progress',
+                'completed': 'Completed',
+                'escalated': 'Escalated'
+            };
+            return options[status] || status;
+        }
+        
+        // Helper function to get station name
+        function getStationName(stationId) {
+            const station = dummyData.stations.find(s => s.id === stationId);
+            return station ? station.name : stationId;
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after animation
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Load dummy data (simulating backend)
+        function loadDummyData() {
+            // Data is already defined at the top
+            console.log('Dummy data loaded');
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>

@@ -1,55 +1,94 @@
-README.md – Emergency Response System for Uganda
- Project Name: Emergency Response System (999-UG)
-A unified digital emergency response platform for Uganda, developed to enhance the efficiency and responsiveness of police and emergency services.
- Project Description
-The 999 Emergency Response System is designed to digitally transform Uganda’s police emergency hotline. The system automatically redirects emergency calls to the nearest police post, tracks caller location, captures real-time audio, and notifies nearby responders. It ensures real-time accountability and drastically improves emergency handling in Uganda.
-Key Features
-•	 Call Routing: Automatically redirects 999 calls to the closest police station.
-•	 Caller Location Tracking: Displays exact caller coordinates on a map.
-•	Automatic Call Recording: All emergency calls are recorded for safety and accountability.
-•	 Responder Notification: Nearest police officers are alerted instantly.
-•	 Personnel Monitoring: Tracks whether officers are answering/responding to calls.
-•	 Secure Admin Panel: For police administrators and supervisors.
-•	 Public-Only Access via Call: Public only access the system by calling 999. No app or web login.
- Designed For:
-- Uganda Police Force
-- Emergency Coordinators
-- Government Emergency Agencies
-Technologies Used
-Component	Technology
-Frontend	React.js / HTML / CSS / JS
-Backend	Node.js / Express / Firebase / PHP
-Database	Firebase / MySQL
-Location Services	Google Maps API / GPS
-VoIP/Telephony	Twilio or local telco integration
-Recording	MediaRecorder API / SIP-enabled VoIP
-Project Structure
+Uganda Police Force Emergency Management System (UPF-EMS) 
 
-/frontend          # UI dashboard for admin and police  
-/backend           # API endpoints, database, logic  
-/call-center       # Call routing and SIP integration  
-/database          # Emergency logs and user data  
-/docs              # README, user guide, and documentation  
+Table of Contents 
+1. [Overview](#overview)  
+2. [Key Features](#key-features)  
+3. [System Requirements](#system-requirements)  
+4. [Installation & Setup](#installation--setup)  
+5. [User Guide](#user-guide)  
+   - [Login](#login)  
+   - [Officer1 Interface](#officer1-interface-case-entry)  
+   - [Station Interface](#station-interface-case-management)  
+   - [Admin Interface](#admin-interface-system-management)  
+6. [API Documentation](#api-documentation)  
+7. [Security & Compliance](#security--compliance)  
+8. [Support & Contact](#support--contact)  
+9. [License](#license)  
 
- Setup & Installation
+---
 
-# Clone repository
-git clone https://github.com/HINNED/UPF-emergency-system
+Overview 
+The **Uganda Police Force Emergency Management System (UPF-EMS)** is a digital platform designed to enhance emergency response coordination within the **Kampala Metropolitan area**. The system provides **role-based access** to police personnel, ensuring efficient case logging, tracking, and resolution.  
 
-# Frontend
-cd frontend
-npm install
-npm start
+Key Objective 
+Streamline emergency reporting -----with automated case generation  
+Improve response time---- with live location tracking  
+Enhance accountability---with digital case files and reports  
+Ensure security---- with role-based permissions  
 
-# Backend
-cd ../backend
-npm install
-npm start
 
-# Configure database and location services in /config
+Key Features 
 
- Security & Privacy
-- All data is end-to-end encrypted.
-- All users are authenticated.
-- Only authorized government agents can access sensitive data.
+| Feature | Description |
+
+Role-Based Access:  Three distinct interfaces for Officer1, Station, and Admin
+Automated Case Numbering: Unique case IDs generated in format `UPF/YYYY/XXXX`
+Live GPS Tracking:  Real-time mapping of emergency locations |
+|SMS Notifications:    Alerts sent to DPC, O/C Station, and O/C Operations
+Case Referral System: Seamless transfer of cases between stations
+Digital Case Files:  Secure storage of incident reports and updates |
+Admin Dashboard:  Full system control, user management, and analytics |
+
+
+
+System Requirements 
+
+Backend (Server) 
+- Python 
+- MySQL 
+- SMS Gateway API (for notifications)  
+
+Frontend (User Interface) 
+- Modern Browser (Chrome, Firefox, Edge)  
+- Internet Connection 
+- GPS Support (for location tracking)  
+
+
+Installation & Setup  
+
+1. Backend Setup
+```bash
+Clone the repository
+git clone https://github.com/upf/ems.git
+cd ems/backend
+
+# Set up a virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate    # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure database in `config.py`
+# Then initialize the database
+flask db init
+flask db migrate
+flask db upgrade
+
+# Run the server
+flask run
+```
+
+2. Frontend Setup 
+```bash
+cd ../frontend
+npm install  # If using React/Vue
+npm start   # Launch development server
+```
+      
+3. SMS Gateway Setup
+- Configure `sms_config.ini` with provider credentials (MTN, Airtel).  
+
+
 

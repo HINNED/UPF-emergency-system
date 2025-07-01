@@ -5,17 +5,8 @@ Table of Contents
 2. [Key Features](#key-features)  
 3. [System Requirements](#system-requirements)  
 4. [Installation & Setup](#installation--setup)  
-5. [User Guide](#user-guide)  
-   - [Login](#login)  
-   - [Officer1 Interface](#officer1-interface-case-entry)  
-   - [Station Interface](#station-interface-case-management)  
-   - [Admin Interface](#admin-interface-system-management)  
-6. [API Documentation](#api-documentation)  
-7. [Security & Compliance](#security--compliance)  
-8. [Support & Contact](#support--contact)  
-9. [License](#license)  
 
----
+
 
 Overview 
 The **Uganda Police Force Emergency Management System (UPF-EMS)** is a digital platform designed to enhance emergency response coordination within the **Kampala Metropolitan area**. The system provides **role-based access** to police personnel, ensuring efficient case logging, tracking, and resolution.  

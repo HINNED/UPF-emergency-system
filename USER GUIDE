@@ -1,0 +1,68 @@
+User Guide 
+1. Login
+-URL: `https: //ems.police.go.ug/login`  
+- Roles:
+Officer1 (Case Entry Only)  
+  Station (Case Management & Reports)  
+Admin (Full System Access)  
+
+ [Login Page](https://via.placeholder.com/600x400?text=UPF-EMS+Login+Screen)  
+
+2. Officer1 Interface (Case Entry) 
+Tasks:
+- Log emergency calls  
+- Input caller details  
+- Verify location on map  
+- Refer case to nearest station  
+Steps:
+1. Enter Caller Name, Phone, Emergency Type  
+2. Click on the map to confirm location  
+3. Select Referred Station  
+4. Submit → Case number auto-generated
+ [Officer1 Interface](https://via.placeholder.com/600x400?text=Case+Entry+Form)  
+3. Station Interface (Case Management) 
+Features:
+✔ View referred cases  
+✔ Update case status (Pending → Dispatched → Resolved)  
+✔ File digital reports  
+✔ Escalate cases when needed  
+Steps:
+1. Open Referred Cases tab  
+2. Click on a case to view details & location
+3. Add updates (e.g., "Unit dispatched")  
+4. Generate report for command center  
+
+[Station Dashboard](https://via.placeholder.com/600x400?text=Station+Case+Dashboard)  
+
+4. Admin Interface (System Management)
+Features:  
+- User Management (Add/Edit officers & stations)  
+- Case Analytics (View all cases, response times)  
+- System Settings (Configure SMS, map providers)  
+
+Steps:
+1. Navigate to User Management
+2. Click Add User to register new officers  
+3. Set role (Officer1, Station, Admin) 
+4. Save to activate account  
+
+![Admin Dashboard](https://via.placeholder.com/600x400?text=Admin+User+Management)  
+
+
+API Documentation 
+The backend supports **RESTful APIs for integration.  
+📄 [View Full API Docs] (API_DOCS.md)  
+
+| Endpoint | Method | Description |
+| `/api/cases` | `POST` | Create new emergency case |
+| `/api/cases/ {id}/updates` | `POST` | Add case update |
+| `/api/reports` | `POST` | Submit case report |
+| `/api/users` | `POST` | Add new user (Admin only) |
+
+Security & Compliance 
+- 🔒HTTPS Encryption (All communications secured)  
+- 🔑 Role-Based Access Control (Strict permissions)  
+- 📝Audit Logging (All actions recorded)  
+
+
+
